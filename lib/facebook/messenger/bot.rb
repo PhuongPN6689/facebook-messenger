@@ -13,7 +13,7 @@ module Facebook
       include HTTParty
 
       # Define base_uri for HTTParty.
-      base_uri 'https://graph.facebook.com/v3.2/me'
+      base_uri 'https://graph.facebook.com/v15.0/me'
 
       #
       # @return [Array] Array containing the supported webhook events.
@@ -57,6 +57,18 @@ module Facebook
                           format: :json,
                           query: query
 
+          Facebook::Messenger::Bot::ErrorParser.raise_errors_from(response)
+
+          response.body
+        end
+
+        # VSS phuongpn2
+        # Dang 1 comment
+        def comment_deliver(page_id, comment_id, body)
+          access_token = config.provider.access_token_for(page_id)
+
+          link = 'https://graph.facebook.com/v15.0/' + comment_id.to_s + '/comments?access_token=' + access_token.to_s
+          response = post(link,  body: body)
           Facebook::Messenger::Bot::ErrorParser.raise_errors_from(response)
 
           response.body

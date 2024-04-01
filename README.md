@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/jgorset/facebook-messenger/blob/master/docs/conversation.gif?raw=true">
+  <img src="https://rawgit.com/jgorset/facebook-messenger/master/docs/conversation_with_logo.gif">
 </p>
 
 
@@ -24,7 +24,9 @@ You can reply to messages sent by the human:
 # bot.rb
 require 'facebook/messenger'
 
-Facebook::Messenger::Bot.on :message do |message|
+include Facebook::Messenger
+
+Bot.on :message do |message|
   message.id          # => 'mid.1457764197618:41d102a3e1ae206a38'
   message.sender      # => { 'id' => '1008372609250235' }
   message.recipient   # => { 'id' => '2015573629214912' }
@@ -40,7 +42,7 @@ end
 ... or even send the human messages out of the blue:
 
 ```ruby
-Facebook::Messenger::Bot.deliver({
+Bot.deliver({
   recipient: {
     id: YOUR_RECIPIENT_ID
   },
@@ -177,7 +179,7 @@ end
 You can keep track of messages sent to the human:
 
 ```ruby
-Facebook::Messenger::Bot.on :message_echo do |message_echo|
+Bot.on :message_echo do |message_echo|
   message_echo.id          # => 'mid.1457764197618:41d102a3e1ae206a38'
   message_echo.sender      # => { 'id' => '1008372609250235' }
   message_echo.seq         # => 73
@@ -256,7 +258,7 @@ When the human follows a m.me link with a ref parameter like http://m.me/mybot?r
 you will receive a `referral` event.
 
 ```ruby
-Facebook::Messenger::Bot.on :referral do |referral|
+Bot.on :referral do |referral|
   referral.sender    # => { 'id' => '1008372609250235' }
   referral.recipient # => { 'id' => '2015573629214912' }
   referral.sent_at   # => 2016-04-22 21:30:36 +0200
@@ -269,7 +271,7 @@ end
 Another bot can pass a human to you:
 
 ```ruby
-Facebook::Messenger::Bot.on :pass_thread_control do |pass_thread_control|
+Bot.on :pass_thread_control do |pass_thread_control|
   pass_thread_control.new_owner_app_id # => '123456789'
   pass_thread_control.metadata # => 'Additional content that the caller wants to set'
 end
@@ -356,7 +358,7 @@ Facebook::Messenger::Profile.set({
 See Facebook's documentation on [Messaging Policy Enforcement](https://developers.facebook.com/docs/messenger-platform/reference/webhook-events/messaging_policy_enforcement)
 
 ```ruby
-Facebook::Messenger::Bot.on :'policy_enforcement' do |referral|
+Bot.on :'policy_enforcement' do |referral|
   referral.action # => 'block'
   referral.reason # => "The bot violated our Platform Policies (https://developers.facebook.com/policy/#messengerplatform). Common violations include sending out excessive spammy messages or being non-functional."
 end
@@ -371,7 +373,7 @@ See Facebook's documentation on [Sending Messages](https://developers.facebook.c
 As of May 7th 2018 all messages are required to include a messaging_type
 
 ```ruby
-Facebook::Messenger::Bot.deliver({
+Bot.deliver({
   recipient: {
     id: '45123'
   },
@@ -389,7 +391,7 @@ See Facebook's documentation on [Message Tags](https://developers.facebook.com/d
 When sending a message with messaging_type: MESSAGE_TAG (Facebook::Messenger::Bot::MessagingType::MESSAGE_TAG) you must ensure you add a tag: parameter
 
 ```ruby
-Facebook::Messenger::Bot.deliver({
+Bot.deliver({
   recipient: {
     id: '45123'
   },
@@ -534,7 +536,7 @@ We suggest that you put your bot code in `app/bot`.
 
 include Facebook::Messenger
 
-Faceboook::Messenger::Bot.on :message do |message|
+Bot.on :message do |message|
   message.reply(text: 'Hello, human!')
 end
 ```
